@@ -1,0 +1,33 @@
+当进行yolo3的模型实际测试时，发现以下几个问题，主要时编译环境相关问题。
+
+opencv的VideoCapture打开图片文件和视频文件会open失败，解决办法如下：
+      1、重新安装ffmpeg，下载ffmpeg源码，然后
+      （1）./configure --enable-nonfree --enable-pic --enable-shared --disable-x86asm --extra-ldexeflags=-pie
+      （2）make
+      （3）make install
+      2、重新安装opencv，下载opencv源码，然后
+      （1）cmake -D CMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic   -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ..
+      （2）make -j8 线程数自己根据硬件性能指定
+      （3）make install
+      
+      说明：最开始安装ffmpeg时，没有使用本文指定的方法进行配置，导致opencv编译出现如下错误：
+      [ 56%] Linking CXX shared library ../../lib/libopencv_videoio.so
+      [ 59%] Built target opencv_calib3d
+      [ 65%] Built target opencv_dnn
+      [ 65%] Built target opencv_objdetect
+      [ 66%] Built target opencv_video
+      [ 67%] Built target opencv_stitching
+      /usr/bin/ld: /usr/local/lib/libavcodec.a(cavsdsp.o): relocation R_X86_64_PC32 against symbol `ff_pw_96' can not be used when making a shared object; recompile with -fPIC
+      /usr/bin/ld: 最后的链结失败: 错误的值
+      collect2: error: ld returned 1 exit status
+      modules/videoio/CMakeFiles/opencv_videoio.dir/build.make:372: recipe for target 'lib/libopencv_videoio.so.4.2.0' failed
+      make[2]: *** [lib/libopencv_videoio.so.4.2.0] Error 1
+      CMakeFiles/Makefile2:2818: recipe for target 'modules/videoio/CMakeFiles/opencv_videoio.dir/all' failed
+      make[1]: *** [modules/videoio/CMakeFiles/opencv_videoio.dir/all] Error 2
+      Makefile:162: recipe for target 'all' failed
+      make: *** [all] Error 2
+      若遇到如上错误，使用本文指定的方法安装ffmpeg即可解决。
+以上操作完成后，yolo3运行没问题。
+
+      
+
