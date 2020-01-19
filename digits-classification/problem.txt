@@ -1,0 +1,4 @@
+实测环境为opencv4.2
+实测过程出现2个问题：
+1、Mat img = imread(pathName,CV_LOAD_IMAGE_GRAYSCALE); 其中CV_LOAD_IMAGE_GRAYSCALE未定义，改为IMREAD_GRAYSCALE
+2、svm->save("results/eyeGlassClassifierModel.yml");出现段错误，原因是rsults目录未创建，先创建results目录再次运行则ok。
